@@ -1,3 +1,3 @@
 # echoLayer
 
-A echogram classification module for pyEcholab
+An echogram classification module for pyEcholab
