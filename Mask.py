@@ -6,14 +6,32 @@
 | Developed by: Roland Proud <rp43@st-andrews.ac.uk> 
 |               Pelagic Ecology Research Group, University of St Andrews
 | Maintained by:
-|
+| Modification History
+| ?/06/2017   Created class   
+| 07/07/2017  Added __list_to_range and layer_to_vector methods
+|             Updated build_layer to provide layer output as ping-time-vectors
+|             or grid
 '''
 
+
+''' Development
+
+Added ping-time-vector output for layers 
+e.g. layer value: ping range: sample time range 
+
+Next:  - method to convert vector output(ptr) to layer grid
+       - update build_composite to read ping-time-vectors 
+      (therefore providing functionality to merge/add layers
+      together of any grid size)
+
+'''
 ## import packages
 import numpy as np
 import logging
-                                                                                                                                                                             
-## get logger                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+from operator import itemgetter
+import itertools
+
+## get logger
 log = logging.getLogger(__name__)
  
 class Mask(object):
@@ -43,7 +61,71 @@ class Mask(object):
         Initialize dictionary object to store layer functions and parameters
         '''
         self.mask = {'binary':{},'flag':{},'cont':{}}   
-             
+     
+    @staticmethod 
+    def __list_to_range(L):
+        '''
+        '''
+        l = []
+        for k, g in itertools.groupby(enumerate(L), lambda x: x[1]-x[0] ) :
+            v = list(map(itemgetter(1), g))
+            if len(v) > 2:
+                v = [v[0],v[-1]]
+            l += [v]
+        return l   
+
+    def layer_to_vector(self,layer_dict):
+        '''
+        '''
+        ## Get list of time vectors and points for each ping      
+        layer = layer_dict['layer']
+        time  = layer_dict['ping_sample_time']   
+        nSamples,nPings  = layer.shape
+        pings  = []
+        values = []
+        times  = []  
+        time   = np.round(time,10) 
+        for val in np.unique(layer):
+            if val == 0:
+                continue 
+            time_vector = []
+            ping        = []   
+            for p in range(nPings):
+                idx         = np.where(layer[:,p] == val)[0]
+                if len(idx) > 0:
+                    range_lists = self.__list_to_range(idx)
+                    tv          = []
+                    for v in range_lists:
+                        tv += [[time[x,p] for x in v]]
+                    ping        += [p]
+                    time_vector += [tv]
+            
+            ## check if there are any pings with the same time vectors and merge them
+            ping = np.array(ping) 
+            tvs  = list(np.unique(time_vector))
+            ## if there is only one tv/one ping then change structure
+            try:
+                if type(tvs[0]) != list: 
+                    tvs = [[tvs]]
+                elif type(tvs[0][0]) != list: 
+                    tvs = [tvs]
+            except IndexError:
+                log.warning('Layer is empty')
+                tvs = []
+            ping_list        = []
+            time_vector_uniq = []   
+            for tv in tvs:
+                idx               = [int(ping[k]) for k,v in enumerate(time_vector) if v == tv]
+                ping_list        += [self.__list_to_range(idx)]
+                time_vector_uniq += [tv]
+            values += [val]
+            pings  += [ping_list]
+            times  += [time_vector_uniq]
+        
+        return {'pings':pings,'times':times,'values':values,\
+        'pulse_length':layer_dict['pulse_length'],\
+        'ping_time':layer_dict['ping_time']}
+    
     
     def add_layer(self, f,params):
         '''
@@ -95,7 +177,7 @@ class Mask(object):
                     print('\t\t' + 'ID: ' + str(k) + ', Parameter values:',param)
     
     
-    def build_layer(self, obj,layer):
+    def build_layer(self, obj,layer,output = 'grid'):
         '''
         :param obj: echosounder data and parameters
         :type  obj: raw_reader object
@@ -103,13 +185,25 @@ class Mask(object):
         :param layer: layer type, name and ID
         :type  layer: [str, str, int]
         
+        :param output: 'grid' for layer, 'ptv' for 
+                        ping-time-vectors
+        :type  output: str
+        
         build layer using a single layer function
 
         '''
-        params = self.mask[layer[0]][layer[1]]['params'][layer[2]]
-        func   = self.mask[layer[0]][layer[1]]['func']
-        
-        return func(obj,params)
+        ## get parameters and function
+        params     = self.mask[layer[0]][layer[1]]['params'][layer[2]]
+        func       = self.mask[layer[0]][layer[1]]['func']
+        ## get layer dictionary
+        layer_dict = func(obj,params)   
+        if output == 'grid':
+            return layer_dict['layer']
+        elif output == 'ptv':
+            return self.layer_to_vector(layer_dict)
+        else:
+            log.error('unknown layer output type: %s',output)
+            raise ValueError
     
     def build_composite_layer(self,obj,layers,output = 'pa'):
         '''
@@ -126,7 +220,7 @@ class Mask(object):
         :type  output: str
 
         build mask by combining multiple binary layers to either 
-        produce a presence/absence mask or binary representation 
+        produce a presence/absence mask or binary (base2) representation 
 
         '''
         ## check layers are all binary
