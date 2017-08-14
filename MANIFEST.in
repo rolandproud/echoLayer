@@ -1,3 +1,4 @@
 include README.rst
-include data/*
+#include examples/*
+#include data/*
 include docs/*.txt
