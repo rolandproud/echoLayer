@@ -152,19 +152,21 @@ class Mask(object):
         ## get grid for mask output
         output_dict     = self.build_mask(Sv_dict,output_mask_id)
         out_row,out_col = output_dict['Sv'].shape
-        output_mask     = np.zeros((out_row,out_col))
+        output_mask     = output_dict['mask']
         pulse_length    = output_dict['pulse_length']
         start_depth     = output_dict['start_depth']
         sample_int      = output_dict['sample_int']
         
         ## if output bitwise change to string grid
         if output == 'bitwise':
-            output_mask = np.chararray((out_row,out_col))
+            output_mask = output_mask.astype('S1')
         
         ## check pulse length and sample resolution
         ## ADD - allow resolution to be lowered
         ## ADD = allow different ping sets
         for m in mask_ids:
+            if m == output_mask_id:
+                continue
             mask_dict = self.build_mask(Sv_dict,m)
             col_idx   = []
             count     = -1
