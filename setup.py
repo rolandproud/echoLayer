@@ -29,11 +29,6 @@ setup(name='pyechomask',
       packages=['pyechomask'],
             install_requires=[
           'numpy',
-          'gzip',
-          'pickle',
-          'logging',
-          'operator',
-          'itertools',
           'matplotlib'
       ],
       python_requires='>=3',

@@ -16,45 +16,42 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def plot_mask(Sv_dict_fq):
-    
-    mask    = Sv_dict_fq['mask']
+def plot_mask(mask):
+    '''
+    '''
+    ## shape
     row,col = mask.shape
     
     ## plot
     f, (ax1) = plt.subplots(1, figsize = (20,10))
     p1       = ax1.imshow(mask, cmap = plt.cm.spectral,\
-            interpolation='nearest',aspect='auto',extent = [0,col,\
-            Sv_dict_fq['start_depth'][0] + row*Sv_dict_fq['sample_int'][0],\
-            Sv_dict_fq['start_depth'][0]])
+            interpolation='nearest',aspect='auto')
     f.colorbar(p1,pad = 0)
-    plt.xlabel('Pings',fontsize = 18)
-    plt.ylabel('depth (m)',fontsize = 18)
+    plt.xlabel('columns',fontsize = 18)
+    plt.ylabel('rows',fontsize = 18)
 
-def plot_Sv_mask(Sv_dict_fq,add_mask = True):
+def plot_Sv(Sv,mask = None):
     '''
     '''
+    ## get echoview colormap
     setup_ek500_cmap()
     ek500_cmap = mpl.cm.get_cmap('ek500')
     ek500_norm = mpl.colors.BoundaryNorm(np.linspace(-89,-34,12), 12, clip=False)
     
-    Sv = Sv_dict_fq['Sv']
-    #Sv = np.ma.masked_where(Sv == -999,Sv)
-    if add_mask:
-        mask    = Sv_dict_fq['mask']
-        Sv      = np.ma.masked_where(mask == 0,Sv)
+    ## add mask
+    if mask is not None:
+        Sv = np.ma.masked_where(mask == 0,Sv)
+    
     ## shape
     row,col = Sv.shape
     
     ## plot
     f, (ax1) = plt.subplots(1, figsize = (20,10))
     p1       = ax1.imshow(Sv, cmap = ek500_cmap,norm = ek500_norm,\
-            interpolation='nearest',aspect='auto',extent = [0,col,\
-            Sv_dict_fq['start_depth'][0] + row*Sv_dict_fq['sample_int'][0],\
-            Sv_dict_fq['start_depth'][0]])
+            interpolation='nearest',aspect='auto')
     f.colorbar(p1,pad = 0)
-    plt.xlabel('Pings',fontsize = 18)
-    plt.ylabel('depth (m)',fontsize = 18)
+    plt.xlabel('columns',fontsize = 18)
+    plt.ylabel('rows',fontsize = 18)
 
 def setup_ek500_cmap():
     '''

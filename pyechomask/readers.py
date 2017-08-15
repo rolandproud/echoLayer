@@ -1,21 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 .. :module:: readers
-    :synopsis: Read in raw files/data objects and output Sv_dict[fq]
-
-            
-            Sv_dict[fq]:
-                    dict{
-                                Sv: numpy array[nSamples by nPings]:          Sv values: (dB re 1m-1)
-                       start_depth:            list[floats][nPings]: first sample depth: (m)
-                        sample_int:            list[floats][nPings]:    sample interval: (m)
-                      pulse_length:            list[floats][nPings]:       pulse length: (ms)
-                    }
-            
-            fq: float: frequency in kHz
-            For multi-frequency data, ping number assumed to be equal to column number 
-            across all frequencies
-
+    :synopsis: Read in raw files/data objects and output Sv_dicts
 
 | Developed by: Roland Proud (RP) <rp43@st-andrews.ac.uk> 
 |               Pelagic Ecology Research Group, University of St Andrews
@@ -30,13 +16,28 @@ import gzip
 import pickle
 import numpy as np
 
-
-def read_PERGobjs(fp,mask_value = -999):
+def read_PERGobjs(fp,noise_level = -999):
     '''
     :param fp: filepath to object
     :type  fp: string
     
-    parse objects stored in the pelagic ecology research group database
+    :return
+    :param Sv_dict: echogram data and parameters
+    :type  Sv_dict: dictionary
+    dict
+    {frequency: float: channel frequency: kHz      
+           dict
+           {             Sv: numpy array[nSamples by nPings]:          Sv values: (dB re 1m-1)
+               start_depth:            list[floats][nPings]: first sample depth: (m)
+                sample_int:            list[floats][nPings]:    sample interval: (m)
+              pulse_length:            list[floats][nPings]:       pulse length: (ms)
+           }
+    }
+
+    For multi-frequency data, ping number is equal to column number 
+    across all frequencies
+            
+    parse objects stored in the pelagic ecology research group (PERG) database
     and output Sv_dict
     
     '''
@@ -62,7 +63,7 @@ def read_PERGobjs(fp,mask_value = -999):
             maxRow          = max(maxRow,np.max(row_idx))
         
         ## initialize grid
-        Sv_grid     = np.ones((maxRow + 1,endPing + 1)) * mask_value
+        Sv_grid     = np.ones((maxRow + 1,endPing + 1)) * noise_level
         start_depth = []
         samp_int    = []
         tPL         = []
@@ -87,9 +88,9 @@ def read_PERGobjs(fp,mask_value = -999):
     return Sv_dict
 
 
-def remove_background_noise(Sv,mask_value = -999):
+def remove_background_noise(noise_level = -999):
     '''
-    Add when other readers added
+    to be added
     '''
     
     

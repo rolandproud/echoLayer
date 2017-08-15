@@ -2,50 +2,32 @@
 """
 .. :module:: masks
     :synopsis: Contains standardised mask methods
-
-              Each method reads Sv_dict objects (see readers.py)
-              and dictionary of parameters to produce a mask. 
               
               Method format:
  
-                def [mask-type]_[unique-name](Sv_dict,params):
+                def [mask-type]_[unique-name](*args):
                     '''
-                    :param Sv_dict: contains Sv grid, depth
-                    :type  Sv_dict: dictionary
+                    :param [name]: [desc]
+                    :type  [name]: [type]
                     
-                    :param params: fq: frequency (kHz)
-                    :type  params: dictionary of parameter key-value pairs:
-                                   fq: float
                                    ...
                 
                     [description]
                     
                     defined by [initials of developer]
                     
-                    status: [status(dev,test,product)]
+                    status: [status(dev,test or product)]
                     
                     '''
-                    ## get Sv grid and create mask grid
-                    Sv   = Sv_dict[params['fq']]['Sv'] 
-                    mask = np.zeros(Sv.shape).astype(int)
-                    
-                    ## mask code   
-                    
-                    
-                    code...
-                    
-                    
-                    ## add mask to Sv_dict
-                    Sv_dict[params['fq']]['mask'] = mask 
-                    
-                    return Sv_dict[params['fq']]
+                    [code...]
+                    return mask
                 
              
 
              mask-type can be 'binary' (0 or 1), 'flag'(range of ints) 
              or 'cont' (continuous: values range from 0-1)
              
-             for binary masks, 1 = signal; 0 = noise
+             for binary masks: 1 = signal; 0 = noise
 
 | Developed by: Roland Proud (RP) <rp43@st-andrews.ac.uk> 
 |               Pelagic Ecology Research Group, University of St Andrews
@@ -66,14 +48,13 @@ import numpy as np
 
 ################################################################## signal masks 
 
-def binary_threshold(Sv_dict,params):
+def binary_threshold(Sv,threshold):
     '''
-    :param Sv_dict: contains Sv grid, depth
-    :type  Sv_dict: dictionary
+    :param Sv: gridded Sv values (dB re 1m^-1)
+    :type  Sv: numpy.array
     
-    :param params: th: threshold-value (dB re 1m^-1)
-    :type  params: dictionary of parameter key-value pairs:
-                   th: float
+    :param threshold: threshold-value (dB re 1m^-1)
+    :type  threshold: float
 
     generate threshold mask
     
@@ -82,17 +63,13 @@ def binary_threshold(Sv_dict,params):
     status: product
     
     '''
-    ## get Sv grid and create mask grid
-    Sv                            = Sv_dict[params['fq']]['Sv'] 
-    mask                          = np.zeros(Sv.shape).astype(int)
+    ## create mask grid
+    mask = np.zeros(Sv.shape).astype(int)
     
-    ## mask code
-    mask[Sv > params['th']]       = 1
-    
-    ## add mask to Sv_dict
-    Sv_dict[params['fq']]['mask'] = mask 
-        
-    return Sv_dict[params['fq']]
+    ## apply threshold
+    mask[Sv > threshold] = 1
+            
+    return mask
 
 ## detect aggregates/SSLs
 
@@ -100,15 +77,13 @@ def binary_threshold(Sv_dict,params):
 
 ## transmit pulse and near-field
 
-def binary_pulse(Sv_dict,params):
+def binary_pulse(Sv,noise_level = -999):
     '''
-    :param Sv_dict: contains Sv grid, depth
-    :type  Sv_dict: dictionary
+    :param Sv: gridded Sv values (dB re 1m^-1)               
+    :type  Sv: numpy.array
     
-    :param params: fq: frequency (kHz)
-    :type  params: dictionary of parameter key-value pairs:
-                   fq: float
-                   ...
+    :param noise_level: level of background noise (db re 1m^-1)
+    :type  noise_level: float
 
     generate pulse mask, mask pulse and surface noise
     
@@ -117,20 +92,16 @@ def binary_pulse(Sv_dict,params):
     status: dev
     
     '''
-    ## get Sv grid and create mask grid
-    Sv   = Sv_dict[params['fq']]['Sv'] 
+    ## create mask grid
     mask = np.ones(Sv.shape).astype(int)
     
-    ## mask code   
+    ## mask pulse and signal up to first noise sample   
     samples,pings = Sv.shape
     for p in range(pings):
-        idx           = np.where(Sv[:,p] == params['mask_value'])[0][0]
+        idx           = np.where(Sv[:,p] <= noise_level)[0][0]
         mask[0:idx,p] = 0
-        
-    ## add mask to Sv_dict
-    Sv_dict[params['fq']]['mask'] = mask 
-    
-    return Sv_dict[params['fq']]
+         
+    return mask
 
 
 ## surface (bubbles/airation)

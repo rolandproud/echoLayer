@@ -1,0 +1,24 @@
+Metadata-Version: 1.2
+Name: pyechomask
+Version: 1.0.0.dev2
+Summary: An echogram classification tool
+Home-page: https://github.com/rolandproud/pyechomask
+Author: Roland Proud
+Author-email: rp43@st-andrews.ac.uk
+License: GPLv3
+Description: ==========
+        pyechomask
+        ==========
+        An echogram classification tool (in development)
+        ------------------------------------------------
+        
+        developed by Roland Proud (rp43@st-andrews.ac.uk)
+        
+        Pelagic Ecology Research Group, University of St Andrews
+        
+        
+Keywords: echosounder marine acoustics mask
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Programming Language :: Python :: 3.6
+Requires-Python: >=3
