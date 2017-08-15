@@ -48,6 +48,8 @@ class Mask(object):
         Initialize dictionary object to store mask methods and parameters
         '''
         self.mask = {'binary':{},'flag':{},'cont':{}}   
+        ## set mask value
+        self.mask_value = -999
      
     
     def add_mask(self, f,params):
@@ -101,7 +103,7 @@ class Mask(object):
                     print('\t\t' + 'ID: ' + str(k) + ', Parameter values:',param)
     
     
-    def build_mask(self, Sv_dict, mask_id):
+    def build_mask(self, Sv_dict, mask_id,apply = False):
         '''
         :param Sv_dict: contains Sv grid, depth, pulse length
         :type  Sv_dict: dictionary
@@ -116,11 +118,15 @@ class Mask(object):
         params     = self.mask[mask_id[0]][mask_id[1]]['params'][mask_id[2]]
         func       = self.mask[mask_id[0]][mask_id[1]]['func']
         ## get mask dictionary
-        Sv_dict   = func(Sv_dict,params)   
+        Sv_dict_fq = func(Sv_dict,params)   
+        
+        if apply:
+            Sv_dict_fq['Sv'][Sv_dict_fq['mask'] == 0] = self.mask_value
 
-        return Sv_dict
+        return Sv_dict_fq
     
-    
+
+
     def build_composite_mask(self,Sv_dict,mask_ids,output_mask_id,output = 'pa'):
         '''
         :param Sv_dict: contains Sv grid, depth, pulse length

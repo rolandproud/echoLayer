@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 .. :module:: readers
-    :synopsis: Read in raw files/data objects and output Sv_dict
+    :synopsis: Read in raw files/data objects and output Sv_dict[fq]
 
             
-            Sv_dict:
+            Sv_dict[fq]:
                     dict{
                                 Sv: numpy array[nSamples by nPings]:          Sv values: (dB re 1m-1)
                        start_depth:            list[floats][nPings]: first sample depth: (m)
@@ -12,6 +12,7 @@
                       pulse_length:            list[floats][nPings]:       pulse length: (ms)
                     }
             
+            fq: float: frequency in kHz
             For multi-frequency data, ping number assumed to be equal to column number 
             across all frequencies
 
@@ -29,7 +30,8 @@ import gzip
 import pickle
 import numpy as np
 
-def read_PERGobjs(fp):
+
+def read_PERGobjs(fp,mask_value = -999):
     '''
     :param fp: filepath to object
     :type  fp: string
@@ -60,7 +62,7 @@ def read_PERGobjs(fp):
             maxRow          = max(maxRow,np.max(row_idx))
         
         ## initialize grid
-        Sv_grid     = np.ones((maxRow + 1,endPing + 1)) * -999
+        Sv_grid     = np.ones((maxRow + 1,endPing + 1)) * mask_value
         start_depth = []
         samp_int    = []
         tPL         = []
@@ -85,6 +87,11 @@ def read_PERGobjs(fp):
     return Sv_dict
 
 
-
+def remove_background_noise(Sv,mask_value = -999):
+    '''
+    Add when other readers added
+    '''
+    
+    
 
 
