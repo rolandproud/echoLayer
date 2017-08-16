@@ -23,10 +23,10 @@ def plot_mask(mask):
     row,col = mask.shape
     
     ## plot
-    f, (ax1) = plt.subplots(1, figsize = (20,10))
-    p1       = ax1.imshow(mask, cmap = plt.cm.spectral,\
+    #f, (ax1) = plt.subplots(1, figsize = (20,10))
+    p1       = plt.imshow(mask, cmap = plt.cm.spectral,\
             interpolation='nearest',aspect='auto')
-    f.colorbar(p1,pad = 0)
+    plt.colorbar(p1,pad = 0)
     plt.xlabel('columns',fontsize = 18)
     plt.ylabel('rows',fontsize = 18)
 
@@ -46,10 +46,10 @@ def plot_Sv(Sv,mask = None):
     row,col = Sv.shape
     
     ## plot
-    f, (ax1) = plt.subplots(1, figsize = (20,10))
-    p1       = ax1.imshow(Sv, cmap = ek500_cmap,norm = ek500_norm,\
+    #f, (ax1) = plt.subplots(1, figsize = (20,10))
+    p1       = plt.imshow(Sv, cmap = ek500_cmap,norm = ek500_norm,\
             interpolation='nearest',aspect='auto')
-    f.colorbar(p1,pad = 0)
+    plt.colorbar(p1,pad = 0)
     plt.xlabel('columns',fontsize = 18)
     plt.ylabel('rows',fontsize = 18)
 
