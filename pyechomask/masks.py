@@ -116,6 +116,24 @@ def binary_pulse(Sv,noise_level = -999):
 
 ## impulse/interference - regular discrete pulses of sound from external source
 
+def mask_impulse_noise(Sv, threshold):
+    mask = np.ones(Sv.shape).astype(int)
+
+    samples,pings = Sv.shape
+
+    for sample in range(1, samples-1):
+        for ping in range(0, pings):
+            
+            a = Sv[sample-1, ping]
+            b = Sv[sample, ping]
+            c = Sv[sample+1, ping]
+
+            if (b - a > threshold) & (b - c > threshold):
+                mask[sample, ping] = 0
+
+    return mask
+
+
 ## lowered instrument (CTD etc.)
 
 
