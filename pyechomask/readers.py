@@ -16,10 +16,38 @@ import gzip
 import pickle
 import numpy as np
 
-def read_PERGobjs(fp,noise_level = -999):
+def get_Sv(filepath,frequency,datatype = 'PERG',noise_level = -999):
     '''
-    :param fp: filepath to object
-    :type  fp: string
+    :param filepath: filepath to object
+    :type  filepath: string
+    
+    :param freqeuncy: channel frequency (kHz)
+    :type  freqeuncy: float
+    
+    :param datatype: datatype of file
+    :type  datatype: string
+    
+    'PERG': PERG object
+    
+    :param noise_level: level of background noise (db re 1m^-1)
+    :type  noise_level: float
+    
+    '''
+    if datatype == 'PERG':
+        Sv_dict = read_PERGobjs(filepath,noise_level = noise_level)
+        return Sv_dict[frequency]['Sv']
+    else:
+        print('unknown datatype: %s',datatype)
+        raise(TypeError)
+    
+    
+def read_PERGobjs(filepath,noise_level = -999):
+    '''
+    :param filepath: filepath to object
+    :type  filepath: string
+    
+    :param noise_level: level of background noise (db re 1m^-1)
+    :type  noise_level: float
     
     :return
     :param Sv_dict: echogram data and parameters
@@ -43,7 +71,7 @@ def read_PERGobjs(fp,noise_level = -999):
     '''
     
     ## read raw multi-frequency EK60 data
-    f   = gzip.open(fp,'rb')
+    f   = gzip.open(filepath,'rb')
     obj = pickle.load(f,encoding = 'bytes')
     f.close()
     

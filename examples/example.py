@@ -14,7 +14,7 @@ import numpy as np
 ## import user modules
 import pyechomask
 from pyechomask.masks import binary_pulse, binary_threshold
-from pyechomask.readers import read_PERGobjs
+from pyechomask.readers import get_Sv
 from pyechomask.plotting import plot_Sv, plot_mask
 from pyechomask.manipulate import merge_binary
 
@@ -22,24 +22,25 @@ from pyechomask.manipulate import merge_binary
 data_filenames = glob.glob(os.path.dirname(pyechomask.__file__).rsplit('\\',1)[0]+'/data/*')
 
 ## parse PERG obj and output Sv_dict (see readers.py)
-Sv_dict = read_PERGobjs(data_filenames[0])
+Sv18 = get_Sv(data_filenames[0],18)
+Sv38 = get_Sv(data_filenames[0],38)
 
 ## plot 18 kHz echogram
-plot_Sv(Sv_dict[18]['Sv'])
+plot_Sv(Sv18)
 
 ## create masks
-pulse_mask_18     = binary_pulse(Sv_dict[18]['Sv'])
-threshold_mask_18 = binary_threshold(Sv_dict[18]['Sv'],-75)
-threshold_mask_38 = binary_threshold(Sv_dict[38]['Sv'],-85)
+pulse_mask_18     = binary_pulse(Sv18)
+threshold_mask_18 = binary_threshold(Sv18,-75)
+threshold_mask_38 = binary_threshold(Sv38,-85)
 
 ## plot 18 kHz echogram with pulse mask
-plot_Sv(Sv_dict[18]['Sv'],mask = pulse_mask_18)
+plot_Sv(Sv18,mask = pulse_mask_18)
 
 #### create composite masks
 ## presence absence mask
 pa_mask              = threshold_mask_18 + threshold_mask_38
 pa_mask[pa_mask > 0] = 1
-plot_Sv(Sv_dict[18]['Sv'],mask = pa_mask)
+plot_Sv(Sv18,mask = pa_mask)
 ## merge masks
 merged_mask = merge_binary([threshold_mask_18,threshold_mask_38])
 ## this time, plot just the mask

@@ -12,7 +12,7 @@ def readme():
         return f.read()
     
 setup(name='pyechomask',
-      version='1.0.0.dev2',
+      version='1.0.0.dev3',
       description='An echogram classification tool',
       long_description=readme(),
       classifiers=[
@@ -25,7 +25,7 @@ setup(name='pyechomask',
       url='https://github.com/rolandproud/pyechomask',
       author='Roland Proud',
       author_email='rp43@st-andrews.ac.uk',
-      license='GPLv3',
+      license='MIT',
       packages=['pyechomask'],
             install_requires=[
           'numpy',
