@@ -12,7 +12,7 @@
                     
                                    ...
                 
-                    [description]
+                    desc: [description]
                     
                     defined by [initials of developer]
                     
@@ -56,7 +56,7 @@ def binary_threshold(Sv,threshold):
     :param threshold: threshold-value (dB re 1m^-1)
     :type  threshold: float
 
-    generate threshold mask
+    desc: generate threshold mask
     
     defined by RP
     
@@ -85,7 +85,7 @@ def binary_pulse(Sv,noise_level = -999):
     :param noise_level: level of background noise (db re 1m^-1)
     :type  noise_level: float
 
-    generate pulse mask, mask pulse and surface noise
+    desc: generate pulse mask, mask pulse and surface noise
     
     defined by RP
     
