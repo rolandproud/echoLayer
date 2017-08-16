@@ -43,8 +43,7 @@ import numpy as np
 
 ################################################################## background noise
 
-## Add function to reader module
-## background noise is already removed from PERGobjects
+## background noise removed by readers
 
 ################################################################## signal masks 
 

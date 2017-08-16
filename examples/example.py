@@ -21,7 +21,7 @@ from pyechomask.manipulate import merge_binary
 ## filenames of test data
 data_filenames = glob.glob(os.path.dirname(pyechomask.__file__).rsplit('\\',1)[0]+'/data/*')
 
-## parse PERG obj and output Sv_dict (see readers.py)
+## parse PERG obj and output Sv (see readers.py)
 Sv18 = get_Sv(data_filenames[0],18)
 Sv38 = get_Sv(data_filenames[0],38)
 
