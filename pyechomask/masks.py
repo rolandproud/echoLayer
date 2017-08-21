@@ -11,7 +11,10 @@
                     :type  [name]: [type]
                     
                                    ...
-                
+                    return:
+                    :param [name]: [desc]
+                    :type  [name]: [type]
+                    
                     desc: [description]
                     
                     defined by [initials of developer]
@@ -32,7 +35,7 @@
 | Developed by: Roland Proud (RP) <rp43@st-andrews.ac.uk> 
 |               Pelagic Ecology Research Group, University of St Andrews
 | Contributors:
-|
+|               Rob Blackwell (RB) BAS
 | Maintained by:
 | Modification History:      
 |
@@ -55,6 +58,10 @@ def binary_threshold(Sv,threshold):
     :param threshold: threshold-value (dB re 1m^-1)
     :type  threshold: float
 
+    return:
+    :param mask: binary mask (0 - noise; 1 - signal)
+    :type  mask: 2D numpy.array
+    
     desc: generate threshold mask
     
     defined by RP
@@ -72,6 +79,7 @@ def binary_threshold(Sv,threshold):
 
 ## detect aggregates/SSLs
 
+
 ################################################################### noise masks
 
 ## transmit pulse and near-field
@@ -84,6 +92,10 @@ def binary_pulse(Sv,noise_level = -999):
     :param noise_level: level of background noise (db re 1m^-1)
     :type  noise_level: float
 
+    return:
+    :param mask: binary mask (0 - noise; 1 - signal)
+    :type  mask: 2D numpy.array
+    
     desc: generate pulse mask, mask pulse and surface noise
     
     defined by RP
@@ -115,7 +127,26 @@ def binary_pulse(Sv,noise_level = -999):
 
 ## impulse/interference - regular discrete pulses of sound from external source
 
-def mask_impulse_noise(Sv, threshold):
+def binary_impulse(Sv, threshold):
+    '''
+    :param Sv: gridded Sv values (dB re 1m^-1)
+    :type  Sv: numpy.array
+    
+    :param threshold: threshold-value (dB re 1m^-1)
+    :type  threshold: float
+    
+    return:
+    :param mask: binary mask (0 - noise; 1 - signal)
+    :type  mask: 2D numpy.array
+
+    desc: generate threshold mask
+    
+    defined by RB
+    
+    status: test
+    
+    '''
+    
     mask = np.ones(Sv.shape).astype(int)
 
     samples,pings = Sv.shape

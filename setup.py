@@ -12,7 +12,7 @@ def readme():
         return f.read()
     
 setup(name='pyechomask',
-      version='1.0.0.dev3',
+      version='1.0.0.dev4',
       description='An echogram classification tool',
       long_description=readme(),
       classifiers=[
@@ -29,7 +29,8 @@ setup(name='pyechomask',
       packages=['pyechomask'],
             install_requires=[
           'numpy',
-          'matplotlib'
+          'matplotlib',
+          'scipy'
       ],
       python_requires='>=3',
       include_package_data=True,

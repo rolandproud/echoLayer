@@ -4,8 +4,6 @@ setup.py
 pyechomask/__init__.py
 pyechomask/manipulate.py
 pyechomask/masks.py
-pyechomask/plotting.py
-pyechomask/readers.py
 pyechomask.egg-info/PKG-INFO
 pyechomask.egg-info/SOURCES.txt
 pyechomask.egg-info/dependency_links.txt

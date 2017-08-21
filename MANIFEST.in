@@ -1,4 +1,5 @@
 include README.rst
 #include examples/*
 exclude data/*
+exclude plots/*
 include docs/*.txt
