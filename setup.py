@@ -12,7 +12,7 @@ def readme():
         return f.read()
     
 setup(name='pyechomask',
-      version='1.0.0.dev4',
+      version='1.0.0.dev5',
       description='An echogram classification tool',
       long_description=readme(),
       classifiers=[
