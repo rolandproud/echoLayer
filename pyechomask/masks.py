@@ -220,7 +220,7 @@ def binary_seabed(Sv, min_depth = 0, threshold = -40, buffer = 5,window_size = 3
     
     ## if nothing return
     if np.sum(maxidx2) == 0:
-        return mask
+        return mask,maxidx2
     
     ## mask bad values        
     maxidx2     = np.array(maxidx2)
