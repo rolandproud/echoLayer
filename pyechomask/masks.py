@@ -200,12 +200,17 @@ def binary_seabed(Sv, min_depth = 0, threshold = -40, buffer = 5,window_size = 3
     
     ## mask noise
     Sv = np.ma.masked_where(Sv <= noise_level,Sv)
+    Sv = np.ma.masked_invalid(Sv)
     
     ## mask pulse (if not already removed)
     row,col = Sv.shape
     for c in range(col):
-        idx         = np.ma.where(Sv[:,c] < (threshold - 10))[0][0] ## first idx
-        Sv[0:idx,c] = noise_level
+        idx = np.ma.where(Sv[:,c] < (threshold - 10)) ## idx
+        ## if no data
+        if len(idx[0]) == 0:
+            continue
+        ## else
+        Sv[0:idx[0][0],c] = noise_level
     
     ## take a guess
     maxidx = np.ma.argmax(Sv,axis = 0)
@@ -213,14 +218,14 @@ def binary_seabed(Sv, min_depth = 0, threshold = -40, buffer = 5,window_size = 3
     ## remove values below threshold or above min_depth
     maxidx2 = []
     for k,idx in enumerate(maxidx):
-        if Sv[idx,k] < threshold or idx < min_depth:
+        if Sv[idx,k] < threshold or idx < min_depth or np.ma.is_masked(Sv[idx,k]):
             maxidx2.append(0)
         else:
             maxidx2.append(idx)
     
     ## if nothing return
     if np.sum(maxidx2) == 0:
-        return mask,maxidx2
+        return mask,np.array(maxidx2)
     
     ## mask bad values        
     maxidx2     = np.array(maxidx2)

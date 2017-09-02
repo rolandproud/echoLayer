@@ -21,7 +21,7 @@ from scipy import ndimage
 
 def median_1D_filter(data,window_size,error_value = 0):
     '''
-    Running 1D median filter, width = window_size
+    Running 1D median filter on masked data, width = window_size
     Return error_value where less than 3 data values
     '''
     ## make window odd
